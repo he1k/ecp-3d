@@ -1,0 +1,71 @@
+%\usepackage[left=3cm,right=3cm,top=5cm,bottom=4cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[export]{adjustbox}
+\usepackage{xcolor}
+\usepackage[T1]{fontenc}
+\usepackage{courier}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage[hidelinks]{hyperref}
+\usepackage{caption}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usetikzlibrary{shapes}
+\usetikzlibrary{math}
+\usepackage{tocloft}
+\usepackage{tabularx}
+\usepackage{natbib}   % omit 'round' option if you prefer square brackets
+\usepackage{rotating}
+\renewcommand{\bibname}{References}
+\usepackage[nottoc]{tocbibind}
+\usepackage{etoolbox} % ifthen
+\usepackage[oldvoltagedirection]{circuitikz} 
+\usepackage{mathtools}
+\usepackage{bm}
+\usepackage{esvect}
+\usepackage{datetime}
+\newdateformat{monthyeardate}{%
+	\monthname[\THEMONTH], \THEYEAR}
+\usepackage{siunitx}
+\usepackage{pdfpages}
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+\usepackage{ifthen}
+\pagestyle{fancy}
+\fancyfoot{}{}{}
+\fancyhead{}
+\fancyfoot{}
+\fancyfoot[R]{Page \thepage\ of \pageref{LastPage}}
+\fancyfoot[L]{DTU 02421 - S2024}
+\fancyhead[R]{\small{Ulrik Helk (s203826)}}
+\fancyhead[L]{Assignment 1}
+
+\newcommand\labelAndRemember[2]
+{\expandafter\gdef\csname labeled:#1\endcsname{#2}%
+	\label{#1}#2}
+\newcommand\recallLabel[1]
+{\csname labeled:#1\endcsname\tag{\ref{#1}}}
+\usepackage{todonotes}
+\usepackage{subcaption}
+
+\usepackage{listings}
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+%\lstset{basicstyle=\ttfamily,breaklines=true}
+\lstset{ %
+	backgroundcolor=\color{white},   % choose the background color
+	basicstyle=\ttfamily,        % size of fonts used for the code
+	breaklines=true,                 % automatic line breaking only at whitespace
+	captionpos=b,                    % sets the caption-position to bottom
+	commentstyle=\color{mygreen},    % comment style
+	%escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+	keywordstyle=\color{blue},       % keyword style
+	stringstyle=\color{mymauve},     % string literal style
+	showstringspaces=false
+}
+
+% Boring defines
+\def\q{q^{-1}}
