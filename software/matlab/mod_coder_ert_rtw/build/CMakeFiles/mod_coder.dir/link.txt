@@ -1,0 +1,3 @@
+"C:\Program Files\MATLAB\R2023b\bin\win64\cmake\bin\cmake.exe" -E rm -f CMakeFiles\mod_coder.dir/objects.a
+C:\mingw64\bin\ar.exe qc CMakeFiles\mod_coder.dir/objects.a @CMakeFiles\mod_coder.dir\objects1
+C:\mingw64\bin\gcc.exe -g -Wl,--whole-archive CMakeFiles\mod_coder.dir/objects.a -Wl,--no-whole-archive -o mod_coder.exe -Wl,--out-implib,libmod_coder.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\mod_coder.dir\linkLibs.rsp

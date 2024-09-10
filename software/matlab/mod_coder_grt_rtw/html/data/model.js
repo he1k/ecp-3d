@@ -1,0 +1,1 @@
+var modelInfo = {model:"mod_coder"};var modelHierarchy=[{model:"mod_coder",relativePath:"_internal.html",parent:"null"},];

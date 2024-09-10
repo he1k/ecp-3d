@@ -1,0 +1,12 @@
+[
+{
+  "directory": "C:/Users/farfar/Documents/Git/ecp-3d/software/matlab/mod_coder_ert_rtw/build",
+  "command": "C:\\mingw64\\bin\\gcc.exe -DALLOCATIONFCN=0 -DCLASSIC_INTERFACE=0 -DHAVESTDIO -DINTEGER_CODE=0 -DMAT_FILE=0 -DMODEL=mod_coder -DMODEL_HAS_DYNAMICALLY_LOADED_SFCNS=0 -DMT=0 -DMULTI_INSTANCE_CODE=0 -DNCSTATES=0 -DNUMST=2 -DONESTEPFCN=1 -DTERMFCN=1 -DTID01EQ=1 @CMakeFiles/mod_coder_objects.dir/includes_C.rsp -g -o CMakeFiles\\mod_coder_objects.dir\\mod_coder.c.obj -c C:\\Users\\farfar\\Documents\\Git\\ecp-3d\\software\\matlab\\mod_coder_ert_rtw\\mod_coder.c",
+  "file": "C:/Users/farfar/Documents/Git/ecp-3d/software/matlab/mod_coder_ert_rtw/mod_coder.c"
+},
+{
+  "directory": "C:/Users/farfar/Documents/Git/ecp-3d/software/matlab/mod_coder_ert_rtw/build",
+  "command": "C:\\mingw64\\bin\\gcc.exe -DALLOCATIONFCN=0 -DCLASSIC_INTERFACE=0 -DHAVESTDIO -DINTEGER_CODE=0 -DMAT_FILE=0 -DMODEL=mod_coder -DMODEL_HAS_DYNAMICALLY_LOADED_SFCNS=0 -DMT=0 -DMULTI_INSTANCE_CODE=0 -DNCSTATES=0 -DNUMST=2 -DONESTEPFCN=1 -DTERMFCN=1 -DTID01EQ=1 @CMakeFiles/mod_coder.dir/includes_C.rsp -g -o CMakeFiles\\mod_coder.dir\\ert_main.c.obj -c C:\\Users\\farfar\\Documents\\Git\\ecp-3d\\software\\matlab\\mod_coder_ert_rtw\\ert_main.c",
+  "file": "C:/Users/farfar/Documents/Git/ecp-3d/software/matlab/mod_coder_ert_rtw/ert_main.c"
+}
+]
