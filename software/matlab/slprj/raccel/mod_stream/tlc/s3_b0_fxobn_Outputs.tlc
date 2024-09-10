@@ -1,0 +1,78 @@
+%implements s3_b0_fxobn_Outputs "C"
+
+%function Outputs(block, system) Output
+%assign cfgTxt = ""
+%openfile cfgTxt
+%assign localVarDecl = ""
+%assign _modelSS = ""
+
+%assign tlcOutputsFcnOfS1B0 = OpaqueTLCBlockFcn("Outputs", 1, 0, 1, 2, 0)
+%assign tlcOutputsFcnOfS1B4 = OpaqueTLCBlockFcn("Outputs", 1, 4, 1, 2, 1)
+%assign tlcOutputsFcnOfS1B5 = OpaqueTLCBlockFcn("Outputs", 1, 5, 1, 2, 2)
+%assign tlcOutputsFcnOfS1B6 = OpaqueTLCBlockFcn("Outputs", 1, 6, 1, 2, 3)
+%assign tlcOutputsFcnOfS1B7 = OpaqueTLCBlockFcn("Outputs", 1, 7, 1, 2, 4)
+%assign tlcOutputsFcnOfS1B8 = OpaqueTLCBlockFcn("Outputs", 1, 8, 1, 2, 5)
+%assign tlcOutputsFcnOfS1B9 = OpaqueTLCBlockFcn("Outputs", 1, 9, 1, 2, 6)
+%assign tlcOutputsFcnOfS1B10 = OpaqueTLCBlockFcn("Outputs", 1, 10, 1, 2, 7)
+%<SLibGetRootInportsFromFile(system, TLC_FALSE)>
+%<SLibGenerateExtModeOutput(system)>
+%<tlcOutputsFcnOfS1B0>\
+%if !SLibCGSysFcnIsEmptyForTid(CompiledModel.System[0], "Output",0)
+%if SLibCG_SystemFcnArgAccessed("nry3op5vkn",0,0)
+%assign _modelSS = RTMGetModelSSFromIR()
+%endif
+
+%<SLibCGIRGenReusableSysCall("nry3op5vkn", ["%<_modelSS>", "rtB.lm55kubvwg[0]", "&rtB.enokvg05j0", "&rtDW.enokvg05j0"], 0, 1, 6, 0, 6, 1)>\
+%assign ss = ::CompiledModel.System[0]
+%if !LibSystemIsInlined(ss)
+;
+%else
+\
+%endif
+%endif
+%if !SLibCGSysFcnIsEmptyForTid(CompiledModel.System[0], "Output",0)
+%if SLibCG_SystemFcnArgAccessed("nry3op5vkn",0,0)
+%assign _modelSS = RTMGetModelSSFromIR()
+%endif
+
+%<SLibCGIRGenReusableSysCall("nry3op5vkn", ["%<_modelSS>", "rtB.lm55kubvwg[1]", "&rtB.jrw35yqlor", "&rtDW.jrw35yqlor"], 0, 0, 6, 0, 6, 1)>\
+%assign ss = ::CompiledModel.System[0]
+%if !LibSystemIsInlined(ss)
+;
+%else
+\
+%endif
+%endif
+%if !SLibCGSysFcnIsEmptyForTid(CompiledModel.System[0], "Output",0)
+%if SLibCG_SystemFcnArgAccessed("nry3op5vkn",0,0)
+%assign _modelSS = RTMGetModelSSFromIR()
+%endif
+
+%<SLibCGIRGenReusableSysCall("nry3op5vkn", ["%<_modelSS>", "rtB.lm55kubvwg[2]", "&rtB.ld0kvcd505", "&rtDW.ld0kvcd505"], 0, 2, 6, 0, 6, 1)>\
+%assign ss = ::CompiledModel.System[0]
+%if !LibSystemIsInlined(ss)
+;
+%else
+\
+%endif
+%endif
+%<tlcOutputsFcnOfS1B4>\
+%<tlcOutputsFcnOfS1B5>\
+%<tlcOutputsFcnOfS1B6>\
+%<tlcOutputsFcnOfS1B7>\
+%<tlcOutputsFcnOfS1B8>\
+%<tlcOutputsFcnOfS1B9>\
+%<tlcOutputsFcnOfS1B10>\
+%<SLibInsertSolverResetCode()>\
+%closefile cfgTxt
+%<cfgTxt>
+%<LibSetSystemField(system, "CachedOutputLocalVars", localVarDecl)>
+%endfunction
+%function OutputsFcnProtoType(block, system) Output
+%assign fcnProtoType = ""
+%openfile fcnProtoType
+static void Outputs0(\
+%assign comma = ""
+%closefile fcnProtoType
+%<SLibCG_SetFcnProtoType(1, 2, fcnProtoType)>
+%endfunction

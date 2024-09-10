@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MF0 version="1.1" packageUris="http://schema.mathworks.com/mf0/slsa_mm_parameter_tuning/R2021b">
+  <slsa.mm.parametertuning.VariableRegistry type="slsa.mm.parametertuning.VariableRegistry" uuid="0103e5b6-1787-454a-a0fe-faf20b86fd11">
+    <defaultValueCachePath>/home/farfar/Documents/F2024/ecp-3d/software/matlab/slprj/raccel/mod_stream/mod_stream_default_variable_values.mat</defaultValueCachePath>
+    <name>mod_stream</name>
+  </slsa.mm.parametertuning.VariableRegistry>
+</MF0>

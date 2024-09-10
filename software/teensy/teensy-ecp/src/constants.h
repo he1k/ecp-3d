@@ -3,7 +3,7 @@
 
 // -----------------------
 //           UART
-#define BAUD_RATE 115200
+#define BAUD_RATE 921600//115200
 #define BFR_SIZE 16
 // -----------------------
 

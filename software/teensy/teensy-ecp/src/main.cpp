@@ -1,6 +1,10 @@
 #include <Arduino.h>
 #include "constants.h"
 #include "serial_commands.h"
+#include "QuadEncoder.h"
+QuadEncoder enc3(1, 0, 1, 0);
+QuadEncoder enc2(2, 2, 3, 0);
+QuadEncoder enc1(3, 7, 8, 0);
 IntervalTimer tim;
 bool flag = false;
 bool active = false;
@@ -31,7 +35,6 @@ void tx_float(uint8_t *b)
     Serial.print(0);
   }
   Serial.print(b[0], HEX);
-  Serial.print("\n");
 }
 void setup()
 {
@@ -43,12 +46,30 @@ void setup()
   idx_bfr = 0;
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, LOW);
+  enc1.setInitConfig();
+  //enc1.EncConfig.filterCount = 5;
+  //enc1.EncConfig.filterSamplePeriod = 255;
+  enc1.init();
+  enc2.setInitConfig();
+  //enc2.EncConfig.filterCount = 5;
+  //enc2.EncConfig.filterSamplePeriod = 255;
+  enc2.init();
+  enc3.setInitConfig();
+  //enc3.EncConfig.filterCount = 5;
+  //enc3.EncConfig.filterSamplePeriod = 10;
+  enc3.init();
+
+
   tim.begin(tim_isr, SAMPLE_TIME*1e6);
 }
 uint8_t cnt = 0;
 float f_cnt = 0.0;
 void loop()
 {
+  //Serial.print("enc1: "); Serial.print(enc1.read()); Serial.print("\t");
+  //Serial.print("enc2: "); Serial.print(enc2.read()); Serial.print("\t");
+  //Serial.print("enc3: "); Serial.print(enc3.read()); Serial.println("\t");
+  //delay(100);
   //Serial.write(1);
   //Serial.write(LINE_FEED);
   
@@ -92,20 +113,29 @@ void loop()
   //   cmd_rdy = false;
   //   idx_bfr = 0;
   // }
-  // if(flag)// && active)
-  // {
-  //   flag = false;
-  //   uint8_t b[4];
-  //   //f_cnt =  3.3155519962310791015625f;
-  //   f_cnt =  3.3155901432037353515625f;// 3476608.25f;
-  //   //f_cnt = 3.3155519962310791015625f;//1.144374211815906357437132E-28;//3.315554141998291015625f;//3.315555572509765625f;
-  //   float_to_bytes(&f_cnt,b);
-  //   tx_float(b);
-  //   digitalWrite(LED_BUILTIN, HIGH);
-  // }else
-  // {
-  //   digitalWrite(LED_BUILTIN, LOW);
-  // }
+  if(flag)// && active)
+  {
+    flag = false;
+    uint8_t b[4];
+    //f_cnt =  3.3155519962310791015625f;
+    //f_cnt =  3.3155901432037353515625f;// 3476608.25f;
+    f_cnt = ((float)enc1.read())*360.0f/16000.0f;
+    float_to_bytes(&f_cnt,b);
+    tx_float(b);
+    Serial.print(" ");
+    f_cnt = ((float)enc2.read())*360.0f/16000.0f;
+    float_to_bytes(&f_cnt,b);
+    tx_float(b);
+    Serial.print(" ");
+    f_cnt = ((float)enc3.read())*360.0f/16000.0f;
+    float_to_bytes(&f_cnt,b);
+    tx_float(b);
+    Serial.print("\n");
+    digitalWrite(LED_BUILTIN, HIGH);
+  }else
+  {
+    digitalWrite(LED_BUILTIN, LOW);
+  }
 }
 
 void serialEvent()
