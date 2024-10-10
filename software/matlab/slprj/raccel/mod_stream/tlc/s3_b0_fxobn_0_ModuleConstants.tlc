@@ -1,8 +1,0 @@
-%implements s3_b0_fxobn_0_ModuleConstants "C"
-
-%function ModuleConstants(block) Output
-
-
-/* Named constants for MATLAB Function: '<Root>/bit2float' */
-#define c5hpz05xj3 (-1)
-%endfunction

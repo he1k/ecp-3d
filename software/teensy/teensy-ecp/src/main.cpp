@@ -1,21 +1,33 @@
 #include <Arduino.h>
+#include <SPI.h>
 #include "constants.h"
-#include "serial_commands.h"
 #include "QuadEncoder.h"
-QuadEncoder enc3(1, 0, 1, 0);
-QuadEncoder enc2(2, 2, 3, 0);
-QuadEncoder enc1(3, 7, 8, 0);
+#include "dac.h"
+#include "bridge.h"
+// QuadEncoder enc3(1, 0, 1, 0);
+QuadEncoder enc3(CHA_ENC3, PIN_ENC3_A, PIN_ENC3_B, 0);
+// QuadEncoder enc2(2, 3, 2, 0);
+QuadEncoder enc2(CHA_ENC2, PIN_ENC2_A, PIN_ENC2_B, 0);
+//QuadEncoder enc1(3, 8, 7, 0);
+QuadEncoder enc1(CHA_ENC1, PIN_ENC1_A, PIN_ENC1_B, 0);
+
 IntervalTimer tim;
-bool flag = false;
-bool active = false;
-uint8_t bfr[BFR_SIZE];
-uint8_t idx_bfr = 0;
-bool full_bfr = false;
-bool cmd_rdy = false;
-void tim_isr()
-{
-  flag = true;
-}
+
+Dac dac;
+
+Bridge com;
+
+bool res;
+uint8_t flg = 0;
+uint8_t ra = RA_PM_10;
+uint8_t pv = PV_MID_SCALE;
+uint8_t iro = IRO_ENABLED;
+uint8_t ets = ETS_ENABLED;
+uint8_t b2c = B2C_BINARY;
+uint8_t ovr = OVR_DISABLED;
+uint8_t cv = CV_MID_SCALE;
+uint8_t ddc = DDC_ENABLED;
+
 void float_to_bytes(float *f, uint8_t *b)
 {
   memcpy(b, f, 4);
@@ -36,171 +48,136 @@ void tx_float(uint8_t *b)
   }
   Serial.print(b[0], HEX);
 }
+
+void isr_tim()
+{
+  flg = 1;
+}
+
+void ramp()
+{
+  dac.write_output(0);
+  delay(1);
+  dac.write_output(1024);
+  delay(1);
+  dac.write_output(2048);
+  delay(1);
+  dac.write_output(3072);
+  delay(1);
+  dac.write_output(4095);
+}
 void setup()
 {
-  Serial.begin(BAUD_RATE);
-  for(int i = 0; i < BFR_SIZE; i++)
-  {
-    bfr[i] = 0;
-  }
-  idx_bfr = 0;
-  pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, LOW);
+  // Init communication
+  com.begin(&Serial);
+  pinMode(PIN_DEBUG, OUTPUT);
+  digitalWrite(PIN_DEBUG, LOW);
+
+  // Init DAC
+  dac.begin(&SPI, AD5721R, PIN_NSYNC, PIN_NLDAC, PIN_NRESET, PIN_NCLEAR, PIN_NALERT);
+  pinMode(PIN_NRESET, OUTPUT);
+  pinMode(PIN_NALERT, INPUT);
+  pinMode(PIN_NLDAC, OUTPUT);
+  pinMode(PIN_NCLEAR, OUTPUT);
+  pinMode(PIN_NSYNC, OUTPUT);
+  digitalWrite(PIN_NRESET, HIGH);
+  digitalWrite(PIN_NCLEAR, HIGH);
+  digitalWrite(PIN_NSYNC, HIGH);
+  digitalWrite(PIN_NLDAC, LOW);
+  res = dac.init_device(ra, pv, iro, ets, b2c, ovr, cv, ddc);
+  // delay(2000);
+  // dac.print_config();
+  // delay(100);
+  // dac.read_config();
+  // dac.print_config();
+  // delay(1000);
+  // dac.read_config();
+  // dac.print_config();
+
+  // Init encoders
   enc1.setInitConfig();
-  //enc1.EncConfig.filterCount = 5;
-  //enc1.EncConfig.filterSamplePeriod = 255;
+  // enc1.EncConfig.filterCount = ENC_FILTER_N;
+  // enc1.EncConfig.filterSamplePeriod = ENC_FILTER_T_US;
   enc1.init();
   enc2.setInitConfig();
-  //enc2.EncConfig.filterCount = 5;
-  //enc2.EncConfig.filterSamplePeriod = 255;
+  // enc2.EncConfig.filterCount = ENC_FILTER_N;
+  // enc2.EncConfig.filterSamplePeriod = ENC_FILTER_T_US;
   enc2.init();
   enc3.setInitConfig();
-  //enc3.EncConfig.filterCount = 5;
-  //enc3.EncConfig.filterSamplePeriod = 10;
+  // enc3.EncConfig.filterCount = ENC_FILTER_N;
+  // enc3.EncConfig.filterSamplePeriod = ENC_FILTER_T_US;
   enc3.init();
+  enc1.write(0);
+  enc2.write(0);
+  enc3.write(0);
 
-
-  tim.begin(tim_isr, SAMPLE_TIME*1e6);
+  // Init timer
+  tim.begin(isr_tim, CTRL_TS*1e6);
 }
-uint8_t cnt = 0;
-float f_cnt = 0.0;
+#define LOOP_DELAY 500
+uint16_t out = 0;
+float f = 0;
+#define STATE_OFF 0
+#define STATE_ON 1
+uint8_t state = STATE_OFF;
+uint32_t cnt = 0;
+uint32_t m_p = 0;
+uint32_t t_p = 0;
 void loop()
 {
-  //Serial.print("enc1: "); Serial.print(enc1.read()); Serial.print("\t");
-  //Serial.print("enc2: "); Serial.print(enc2.read()); Serial.print("\t");
-  //Serial.print("enc3: "); Serial.print(enc3.read()); Serial.println("\t");
-  //delay(100);
-  //Serial.write(1);
-  //Serial.write(LINE_FEED);
-  
-  // if(false)
-  // {
-  //   //Serial.write(bfr[0]);
-  //   //Serial.write(bfr[1]);  
-  //   switch(bfr[0])
-  //   {
-  //     case CMD_START:
-  //       if(bfr[1] == LINE_FEED) // Correctly received command
-  //       {
-  //         Serial.write(CMD_START_RX);
-  //         Serial.write(LINE_FEED);
-  //         active = true;
-  //       }else
-  //       {
-  //         Serial.write(CMD_ERROR_TERMINATION);
-  //         Serial.write(LINE_FEED);
-  //       }
-  //       break;
-  //     case CMD_STOP:
-  //       if(bfr[1] == LINE_FEED) // Correctly received command
-  //       {
-  //         Serial.write(CMD_STOP_RX);
-  //         Serial.write(LINE_FEED);
-  //         active = false;
-  //       }else
-  //       {
-  //         Serial.write(CMD_ERROR_TERMINATION);
-  //         Serial.write(LINE_FEED);
-  //       }
-  //       break;
-  //   }
-  //   cmd_rdy = false;
-  //   idx_bfr = 0;
-  // }
-  // if(cmd_rdy)
-  // {
-  //   tx_float(bfr);
-  //   cmd_rdy = false;
-  //   idx_bfr = 0;
-  // }
-  if(flag)// && active)
+  if(flg)
   {
-    flag = false;
-    uint8_t b[4];
-    //f_cnt =  3.3155519962310791015625f;
-    //f_cnt =  3.3155901432037353515625f;// 3476608.25f;
-    f_cnt = ((float)enc1.read())*360.0f/16000.0f;
-    float_to_bytes(&f_cnt,b);
-    tx_float(b);
-    Serial.print(" ");
-    f_cnt = ((float)enc2.read())*360.0f/16000.0f;
-    float_to_bytes(&f_cnt,b);
-    tx_float(b);
-    Serial.print(" ");
-    f_cnt = ((float)enc3.read())*360.0f/16000.0f;
-    float_to_bytes(&f_cnt,b);
-    tx_float(b);
-    Serial.print("\n");
-    digitalWrite(LED_BUILTIN, HIGH);
-  }else
-  {
-    digitalWrite(LED_BUILTIN, LOW);
-  }
-}
-
-void serialEvent()
-{
-  if(Serial.available())
-  {
-    if(idx_bfr < BFR_SIZE)
+    flg = 0;
+    cnt++;
+    switch(com.read_command())
     {
-      uint8_t b = Serial.read();
-      if(b == LINE_FEED)
-      {
-        //Serial.print(idx_bfr, HEX);
-        for(int i = 0; i < idx_bfr; i++)
-        {
-          Serial.print(bfr[i],HEX);
-        }
-        Serial.print("\n");
-        digitalWrite(LED_BUILTIN, HIGH);
-        idx_bfr = 0;
-      }else
-      {
-        if(b >= 0x30 && b <= 0x39)
-        {
-          b -= 0x30;
-        }else if(b >= 0x41 && b <= 0x46) // Using upper case letters for digits > 9 - this is done when constants are written in dec
-        {
-          b = (b & 0x0F) + 0x9;
-        }else if(b >= 0x61 && b <= 0x66) // Using lower case letters for digits > 9 - this is done when constants are written in hex
-        {
-          b = (b & 0x0F) + 0x9;
-          //b -= (0x061+0x0A);
-        }
-        bfr[idx_bfr] = b;
-        idx_bfr++;
-      }
-      // if(idx_bfr == 4)
-      // {
-        
-      // }else
-      // {
-      //   bfr[idx_bfr] = b;
-      //   idx_bfr++;
-      // }
+      case CMD_NONE:
+        break;
+      case CMD_START:
+        t_p = micros();
+        state = STATE_ON;
+        break;
+      case CMD_STOP:
+        state = STATE_OFF;
+        break;
     }
-  }
-}
-
-/*
-void serialEvent()
-{
-  if(Serial.available()) // Maybe change to while loop instead
-  {
-    if(!cmd_rdy && idx_bfr >= BFR_SIZE )
+    if(state == STATE_OFF)
     {
-      full_bfr = true;
-    }else if(!cmd_rdy && idx_bfr < BFR_SIZE)
+      dac.sw_clear_output();
+    }else if(state == STATE_ON)
     {
-      uint8_t b = Serial.read();
-      bfr[idx_bfr] = b;
-      idx_bfr++;
-      if(b == LINE_FEED)
+      if(com.data_valid())
       {
-        cmd_rdy = true;
+        digitalWrite(PIN_DEBUG, HIGH);
+        f = com.read_data();
+        if(f > TORQUE_LIM)
+        {
+          f = TORQUE_LIM;
+        }else if(f < -TORQUE_LIM)
+        {
+          f = -TORQUE_LIM;
+        }
+        int32_t u = 2048 + f*2048.0/TORQUE_MAX;
+        if(u > 4095)
+        {
+          u = 4095;
+        }else if(u < 0)
+        {
+          u = 0;
+        }
+        //dac.write_output((uint16_t)u);
+        uint32_t m = micros();
+        com.write_encoder(f,m-m_p,((float)enc3.read())*C2D);
+        //Serial.print(f,6);
+        //Serial.print("\n");
+        m_p = m;
       }
     }
   }
 }
-*/
+
+
+void serialEvent()
+{
+  com.rx_ready();
+}

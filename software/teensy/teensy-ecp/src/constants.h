@@ -1,13 +1,63 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
+#include <math.h>
+// ------------------------------------------------ //
+//                    USB serial                    //
+// ------------------------------------------------ //
+#define BAUD_RATE 12000000
 
-// -----------------------
-//           UART
-#define BAUD_RATE 12000000//921600//115200
-#define BFR_SIZE 16
-// -----------------------
+// ------------------------------------------------ //
+//                       GPIO                       //
+// ------------------------------------------------ //
+// DAC
+#define PIN_SCLK 13  // DAC serial clock
+#define PIN_SDI 11   // DAC serial input
+#define PIN_SDO 12   // DAC serial output
+#define PIN_NSYNC 14 // DAC frame synchronization
+#define PIN_NRESET 19
+#define PIN_NALERT 17
+#define PIN_NLDAC 15
+#define PIN_NCLEAR 16
+// Encoders
+#define CHA_ENC1   3 // Encoder channel for encoder #1
+#define CHA_ENC2   2 // Encoder channel for encoder #2
+#define CHA_ENC3   1 // Encoder channel for encoder #3
+#define PIN_ENC1_A 8 // Phase A pin for encoder #1
+#define PIN_ENC1_B 7 // Phase B pin for encoder #1
+#define PIN_ENC2_A 3 // Phase A pin for encoder #2
+#define PIN_ENC2_B 2 // Phase B pin for encoder #2
+#define PIN_ENC3_A 0 // Phase A pin for encoder #3
+#define PIN_ENC3_B 1 // Phase B pin for encoder #3
 
+// Debug
+#define PIN_DEBUG 38
+// ------------------------------------------------ //
+//                       SPI                        //
+// ------------------------------------------------ //
 
-#define SAMPLE_TIME 0.01
+#define SPI_MODE SPI_MODE2            // Idle clock high, latching data on falling edge and MSB transfered first
+#define SPI_ENDIANNESS MSBFIRST       // DAC expects MSB to be send first, ie. big endian
+#define SPI_CLOCK_DIV SPI_CLOCK_DIV8 // SPI clock divider, produces 1 MHz clock on Teensy 4.1
+#define DEL_NSYNC_US 1000               // Delay for changing LSYNC before/after SPI transfer
 
+// ------------------------------------------------ //
+//                     Encoders                     //
+// ------------------------------------------------ //
+
+#define ENC_FILTER_T_US 10 // Encoder filters sample period
+#define ENC_FILTER_N    5  // Encoder filter order
+#define PPR 4000.0         // Encoder pulses per rotation
+#define CPR 16000.0             // Encoder counts per rotation
+#define C2D 360.0/CPR    // Encoder counts to degrees
+#define C2R 2.0*M_PI/CPR // Encoder counts to radians
+#define D2R M_PI/180.0   // Degrees to radians
+
+// ------------------------------------------------ //
+//                     RANDOM                       //
+// ------------------------------------------------ //
+
+#define CTRL_TS 0.001   // Sampling time of disc system
+#define TORQUE_LIM 0.1f // Limit torque command (Nm)
+#define TORQUE_MAX 2.0f // Maximum torque command (Nm)
+#define DEC_PLCS 6      // Decimal places for 
 #endif
