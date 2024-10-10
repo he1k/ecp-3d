@@ -29,7 +29,10 @@ stairs(t, u);
 %xlim([0.7 1.1]);
 %%
 figure;
-plot(t, theta2)
+stairs(t, theta3*1e-6)
+hold on;
+stairs(t, miss > 0);
+legend('Reported elapsed time for teensy since start command','Missed ticks');
 
 %%
 figure;

@@ -123,6 +123,7 @@ uint8_t state = STATE_OFF;
 uint32_t cnt = 0;
 uint32_t m_p = 0;
 uint32_t t_p = 0;
+uint8_t set = 0;
 void loop()
 {
   if(flg)
@@ -138,6 +139,7 @@ void loop()
         state = STATE_ON;
         break;
       case CMD_STOP:
+        set = 0;
         state = STATE_OFF;
         break;
     }
@@ -148,6 +150,7 @@ void loop()
     {
       if(com.data_valid())
       {
+        set = 1;
         digitalWrite(PIN_DEBUG, HIGH);
         f = com.read_data();
         if(f > TORQUE_LIM)
@@ -167,10 +170,14 @@ void loop()
         }
         //dac.write_output((uint16_t)u);
         uint32_t m = micros();
-        com.write_encoder(f,m-m_p,((float)enc3.read())*C2D);
+        //com.write_encoder(((float)enc1.read())*C2D,((float)enc2.read())*C2D,((float)enc3.read())*C2D);
+        // com.write_encoder(f,m-m_p,(float)Serial.available());
         //Serial.print(f,6);
         //Serial.print("\n");
         m_p = m;
+      }
+      if(set){
+        com.write_encoder(f,0.0,(float)Serial.available());
       }
     }
   }
