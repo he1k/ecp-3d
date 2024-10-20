@@ -1,6 +1,7 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 #include <math.h>
+#include "dac.h"
 // ------------------------------------------------ //
 //                    USB serial                    //
 // ------------------------------------------------ //
@@ -60,4 +61,19 @@
 #define TORQUE_LIM 0.1f // Limit torque command (Nm)
 #define TORQUE_MAX 2.0f // Maximum torque command (Nm)
 #define DEC_PLCS 6      // Decimal places for 
+
+// ------------------------------------------------ //
+//                      DAC                         //
+// ------------------------------------------------ //
+#define DAC_CONF_RA  RA_PM_10
+#define DAC_CONF_PV  PV_MID_SCALE
+#define DAC_CONF_IRO IRO_ENABLED
+#define DAC_CONF_ETS ETS_ENABLED
+#define DAC_CONF_B2C B2C_BINARY
+#define DAC_CONF_OVR OVR_DISABLED
+#define DAC_CONF_CV  CV_MID_SCALE
+#define DAC_CONF_DDC DDC_ENABLED 
+
+
+
 #endif

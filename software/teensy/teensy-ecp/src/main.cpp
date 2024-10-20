@@ -4,68 +4,26 @@
 #include "QuadEncoder.h"
 #include "dac.h"
 #include "bridge.h"
-// QuadEncoder enc3(1, 0, 1, 0);
+// Encoders
 QuadEncoder enc3(CHA_ENC3, PIN_ENC3_A, PIN_ENC3_B, 0);
-// QuadEncoder enc2(2, 3, 2, 0);
 QuadEncoder enc2(CHA_ENC2, PIN_ENC2_A, PIN_ENC2_B, 0);
-//QuadEncoder enc1(3, 8, 7, 0);
 QuadEncoder enc1(CHA_ENC1, PIN_ENC1_A, PIN_ENC1_B, 0);
-
+// Timer
 IntervalTimer tim;
-
+// DAC
 Dac dac;
-
+// USB
 Bridge com;
-
+// 
 bool res;
-uint8_t flg = 0;
-uint8_t ra = RA_PM_10;
-uint8_t pv = PV_MID_SCALE;
-uint8_t iro = IRO_ENABLED;
-uint8_t ets = ETS_ENABLED;
-uint8_t b2c = B2C_BINARY;
-uint8_t ovr = OVR_DISABLED;
-uint8_t cv = CV_MID_SCALE;
-uint8_t ddc = DDC_ENABLED;
-
-void float_to_bytes(float *f, uint8_t *b)
-{
-  memcpy(b, f, 4);
-}
-void tx_float(uint8_t *b)
-{
-  Serial.print(b[3], HEX);
-  if(!(b[2] & 0xf0)){
-    Serial.print(0);
-  }
-  Serial.print(b[2], HEX);
-  if(!(b[1] & 0xf0)){
-    Serial.print(0);
-  }
-  Serial.print(b[1], HEX);
-  if(!(b[0] & 0xf0)){
-    Serial.print(0);
-  }
-  Serial.print(b[0], HEX);
-}
-
+// Timer flag
+bool flg = 0;
+// Timer interrupt service routine function
 void isr_tim()
 {
   flg = 1;
 }
 
-void ramp()
-{
-  dac.write_output(0);
-  delay(1);
-  dac.write_output(1024);
-  delay(1);
-  dac.write_output(2048);
-  delay(1);
-  dac.write_output(3072);
-  delay(1);
-  dac.write_output(4095);
-}
 void setup()
 {
   // Init communication
@@ -84,16 +42,7 @@ void setup()
   digitalWrite(PIN_NCLEAR, HIGH);
   digitalWrite(PIN_NSYNC, HIGH);
   digitalWrite(PIN_NLDAC, LOW);
-  res = dac.init_device(ra, pv, iro, ets, b2c, ovr, cv, ddc);
-  // delay(2000);
-  // dac.print_config();
-  // delay(100);
-  // dac.read_config();
-  // dac.print_config();
-  // delay(1000);
-  // dac.read_config();
-  // dac.print_config();
-
+  res = dac.init_device(DAC_CONF_RA, DAC_CONF_PV, DAC_CONF_IRO, DAC_CONF_ETS, DAC_CONF_B2C, DAC_CONF_OVR, DAC_CONF_CV, DAC_CONF_DDC);
   // Init encoders
   enc1.setInitConfig();
   // enc1.EncConfig.filterCount = ENC_FILTER_N;

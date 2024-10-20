@@ -1,7 +1,42 @@
 mdl = 'mod2';
 sim(mdl);
 Ts = 0.004;
+%%
+idx = find(miss>1,1,'last'); % Find index for synchronization
+t_clean = t(idx:end);
+theta1_clean = theta1(idx:end);
+theta2_clean = theta2(idx:end);
+theta3_clean = theta3(idx:end);
+u_clean = u(idx:end);
 
+figure;
+subplot(4,1,1);
+plot(t_clean, theta1_clean);
+title('$\theta_1$')
+xlabel('Time (s)');
+
+subplot(4,1,2);
+plot(t_clean, theta2_clean);
+title('$\theta_2$')
+xlabel('Time (s)');
+
+subplot(4,1,3);
+plot(t_clean, theta3_clean);
+title('$\theta_3$')
+xlabel('Time (s)');
+
+subplot(4,1,4);
+plot(t_clean, u_clean);
+title('$u$')
+xlabel('Time (s)');
+%%
+figure;
+hold on;
+stairs(t_clean,theta1_clean,'b','LineWidth',2);
+stairs(t_clean,theta2_clean,':g','LineWidth',2);
+stairs(t_clean,u_clean,'--r','LineWidth',2);
+legend('u recieved','meas','u transmitted')
+xlim([1.8 1.825])
 %%
 figure;
 subplot(3,1,1);
