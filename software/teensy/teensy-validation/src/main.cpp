@@ -1,17 +1,17 @@
 #include <Arduino.h>
-#define PIN_OUT 28
-#define BFR_SIZE 32
-#define LINE_FEED 0xA
-#define DEC_PLCS 6
-#define START_CMD 'B'
-#define STOP_CMD 'S'
-#define STATE_IDLE 0
-#define STATE_CHECK 1
-#define STATE_DELAY 2
+#define PIN_OUT      28
+#define BFR_SIZE     32
+#define LINE_FEED    0xA
+#define DEC_PLCS     6
+#define START_CMD    'B'
+#define STOP_CMD     'S'
+#define STATE_IDLE   0
+#define STATE_CHECK  1
+#define STATE_DELAY  2
 #define STATE_ACTIVE 3
-#define SIM_DELAY 3.0
-#define TS_TEENSY 0.001
-#define TS_MATLAB 0.004
+#define SIM_DELAY    3.0
+#define TS_TEENSY    0.001
+#define TS_MATLAB    0.004
 IntervalTimer tim;
 
 bool flg = 0;
