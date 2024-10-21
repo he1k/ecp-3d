@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <math.h>
 #define PIN_OUT      28
 #define BFR_SIZE     32
 #define LINE_FEED    0xA
@@ -10,8 +11,10 @@
 #define STATE_DELAY  2
 #define STATE_ACTIVE 3
 #define SIM_DELAY    3.0
-#define TS_TEENSY    0.001
+#define TS_TEENSY    0.00025
 #define TS_MATLAB    0.004
+#define SINE_FREQ    0.25
+
 IntervalTimer tim;
 
 bool flg = 0;
@@ -35,23 +38,19 @@ void setup()
     bfr[i] = 0;
   }
   tim.begin(isr_tim, TS_TEENSY*1e6);
-  while(1)
-  {
-    Serial.print(TS_MATLAB,6); Serial.print(" / "); Serial.print(TS_TEENSY,6); Serial.print(" = "); Serial.println((uint32_t) (TS_MATLAB/TS_TEENSY));
-    delay(500);
-  }
 }
 volatile float m[3] = {0,0,0}; // Measurements: m[0] -> m(k-2), m[1] -> m(k-1), m[2] -> m(k)
 volatile float u[3] = {0,0,0}; // Output:       u[0] -> u(k-2), u[1] -> u(k-1), u[2] -> u(k)
 volatile float out = 0;
 float t = 0.0;
-
+uint32_t m_p = micros();
 void loop()
 {
   if(flg)
   {
     flg = 0;
     t+=TS_TEENSY;
+
     switch(state)
     {
       case STATE_IDLE:
@@ -68,6 +67,9 @@ void loop()
         {
           cnt_tim = 0;
           state = STATE_DELAY;
+        }else
+        {
+          state = STATE_IDLE;
         }
       // < CHECK --------------------------------------------------------------- //
         break;
@@ -86,13 +88,24 @@ void loop()
         cnt_tim++;
         if(cnt_tim == (uint32_t) (TS_MATLAB/TS_TEENSY))
         {
+          char s1[16];
+          int i;
+          for(i = 0; i < BFR_SIZE; i++)
+          {
+            if(((char) bfr[i]) == ' ')
+            {
+              break;
+            }
+            s1[i] = bfr[i];
+          }
+          uint32_t cmd = atoi(s1);
+          float in = atof((char*)(bfr+i+1));
           // Measure
-          Serial.print(cmd);
           Serial.print(cmd);
           Serial.print(" ");
           Serial.print(in, DEC_PLCS);  //theta_1
           Serial.print(" ");
-          Serial.print(1.0, DEC_PLCS); // omega_1
+          Serial.print(sin(2.0*M_PI*SINE_FREQ*t), DEC_PLCS); // omega_1
           Serial.print(" ");
           Serial.print(2.0, DEC_PLCS); // theta_2
           Serial.print(" ");
