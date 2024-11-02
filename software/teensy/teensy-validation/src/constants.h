@@ -38,7 +38,7 @@
 
 #define SPI_MODE SPI_MODE2            // Idle clock high, latching data on falling edge and MSB transfered first
 #define SPI_ENDIANNESS MSBFIRST       // DAC expects MSB to be send first, ie. big endian
-#define SPI_CLOCK_DIV SPI_CLOCK_DIV8  // SPI clock divider, produces 1 MHz clock on Teensy 4.1
+#define SPI_CLOCK_DIV SPI_CLOCK_DIV4  // SPI clock divider. Default speed is 16 MHz.
 #define DEL_NSYNC_US 1                // Delay for changing LSYNC before/after SPI transfer
 
 // ------------------------------------------------ //
