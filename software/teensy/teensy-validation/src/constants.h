@@ -57,7 +57,12 @@
 //                     RANDOM                       //
 // ------------------------------------------------ //
 
-#define CTRL_TS 0.001   // Sampling time of disc system
+#define TS_TEENSY    0.00025
+#define TS_MATLAB    0.004
+#define SIM_DELAY    3.0
+#define DEC_PLCS     6
+#define START_CMD    'B'
+#define STOP_CMD     'S'
 #define TORQUE_LIM 0.1f // Limit torque command (Nm)
 #define TORQUE_MAX 2.0f // Maximum torque command (Nm)
 #define DEC_PLCS 6      // Decimal places for 

@@ -1,25 +1,15 @@
 #include <Arduino.h>
+#include "constants.h"
 #include <math.h>
 #include <SPI.h>
 #include <dac.h>
 #define PIN_OUT      28
 #define BFR_SIZE     32
-#define LINE_FEED    0xA
-#define DEC_PLCS     6
-#define START_CMD    'B'
-#define STOP_CMD     'S'
 #define STATE_IDLE   0
 #define STATE_CHECK  1
 #define STATE_DELAY  2
 #define STATE_ACTIVE 3
-#define SIM_DELAY    3.0
-#define TS_TEENSY    0.00025
-#define TS_MATLAB    0.004
 #define SINE_FREQ    0.25
-#define SPI_MODE SPI_MODE2             // Idle clock high, latching data on falling edge and MSB transfered first
-#define SPI_ENDIANNESS MSBFIRST        // DAC expects MSB to be send first, ie. big endian
-#define SPI_CLOCK_DIV SPI_CLOCK_DIV4   // SPI clock divider. Default speed is 16 MHz
-#define DEL_NSYNC_US 1                 // Delay for changing LSYNC before/after SPI transfer
 
 IntervalTimer tim;
 Dac dac;
@@ -46,41 +36,25 @@ void setup()
   {
     bfr[i] = 0;
   }
-bfr[0] = 0x44; // Command
-bfr[1] = (uint8_t) ' ';
-bfr[2] = (uint8_t) '1';
-bfr[3] = (uint8_t) '.';
-bfr[4] = (uint8_t) '0';
-bfr[5] = (uint8_t) ' ';
+  bfr[0] = 0x44; // Command
+  bfr[1] = (uint8_t) ' ';
+  bfr[2] = (uint8_t) '1';
+  bfr[3] = (uint8_t) '.';
+  bfr[4] = (uint8_t) '0';
+  bfr[5] = (uint8_t) ' ';
 
-// Add five more floats separated by whitespace
-bfr[6]  = (uint8_t) '2';
-bfr[7]  = (uint8_t) '.';
-bfr[8]  = (uint8_t) '0';
-bfr[9]  = (uint8_t) ' ';
+  // Add five more floats separated by whitespace
+  bfr[6]  = (uint8_t) '2';
+  bfr[7]  = (uint8_t) '.';
+  bfr[8]  = (uint8_t) '0';
+  bfr[9]  = (uint8_t) ' ';
 
-bfr[10] = (uint8_t) '3';
-bfr[11] = (uint8_t) '.';
-bfr[12] = (uint8_t) '0';
-bfr[13] = (uint8_t) '\n';
-
-bfr[14] = (uint8_t) '4';
-bfr[15] = (uint8_t) '.';
-bfr[16] = (uint8_t) '0';
-bfr[17] = (uint8_t) ' ';
-
-bfr[18] = (uint8_t) '5';
-bfr[19] = (uint8_t) '.';
-bfr[20] = (uint8_t) '0';
-bfr[21] = (uint8_t) ' ';
-
-bfr[22] = (uint8_t) '6';
-bfr[23] = (uint8_t) '.';
-bfr[24] = (uint8_t) '0';
-bfr[25] = (uint8_t) '\n'; // Optional trailing space or can be omitted
+  bfr[10] = (uint8_t) '3';
+  bfr[11] = (uint8_t) '.';
+  bfr[12] = (uint8_t) '0';
+  bfr[13] = (uint8_t) '\n';
+  tim.begin(isr_tim, TS_TEENSY*1e6);
 }
-volatile float m[3] = {0,0,0}; // Measurements: m[0] -> m(k-2), m[1] -> m(k-1), m[2] -> m(k)
-volatile float u[3] = {0,0,0}; // Output:       u[0] -> u(k-2), u[1] -> u(k-1), u[2] -> u(k)
 volatile float out = 0;
 float t = 0.0;
 uint32_t m_p = micros();
@@ -90,10 +64,19 @@ void loop()
   {
     flg = 0;
     // 1) Check for faults in DAC
-    uint8_t dac_fault = dac.get_fault();
+    if(dac.get_fault() != NO_FAULT)
+    {
+      // Reset dac
+      dac.hw_reset();
+      // Slight delay
+      delayMicroseconds(1);
+      // Rewrite config
+      dac.write_config(DAC_CONF_RA, DAC_CONF_PV, DAC_CONF_IRO, DAC_CONF_ETS, DAC_CONF_B2C, DAC_CONF_OVR, DAC_CONF_CV);
+      
+    }
     // 2) Reset dac and add small timeout
     dac.hw_reset();
-    dac.write_config(ra, pv, iro, ets, b2c, ovr, cv);
+    dac.write_config(DAC_CONF_RA, DAC_CONF_PV, DAC_CONF_IRO, DAC_CONF_ETS, DAC_CONF_B2C, DAC_CONF_OVR, DAC_CONF_CV);
     // 3) check for fault again.
 
   }
