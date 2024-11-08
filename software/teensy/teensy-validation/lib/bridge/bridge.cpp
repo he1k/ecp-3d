@@ -1,5 +1,4 @@
 #include "bridge.h"
-
 Bridge::Bridge()
 {
   
@@ -94,7 +93,7 @@ uint8_t Bridge::read_command()
 }
 
 // ISR function for reading serial data
-void Bridge::rx_ready()
+void Bridge::rx_ready_isr()
 {
   if(this->_state == STATE_DATA_VALID) // Must read current valid data
   {

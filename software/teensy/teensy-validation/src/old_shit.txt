@@ -2,6 +2,7 @@
 #include "constants.h"
 #include <math.h>
 #include <SPI.h>
+#include <dac.h>
 #include "QuadEncoder.h"
 #include "bridge.h"
 // Encoders
@@ -16,7 +17,7 @@ QuadEncoder enc1(CHA_ENC1, PIN_ENC1_A, PIN_ENC1_B, 0);
 #define STATE_ACTIVE 3
 #define SINE_FREQ    0.25
 
-Bridge com;
+
 IntervalTimer tim;
 bool flg = 0;
 
@@ -32,34 +33,33 @@ void isr_tim()
 }
 void setup()
 {
-  //Serial.begin(12000000);
-  com.begin(&Serial);
+  Serial.begin(12000000);
   pinMode(PIN_OUT, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, LOW);
+  for(uint8_t i = 0; i < BFR_SIZE; i++)
+  {
+    bfr[i] = 0;
+  }
+  idx = 0;
   tim.begin(isr_tim, TS_TEENSY*1e6);
 }
 volatile float out = 0;
 double t = 0.0;
-uint32_t t_p = 0;
+uint32_t m_p = micros();
 void loop()
 {
   if(flg)
   {
     flg = 0;
     t+=TS_TEENSY;
-    uint8_t cmd = com.read_command();
-    if(cmd == CMD_STOP)
-    {
-      state = STATE_IDLE;
-    }
     switch(state)
     {
       case STATE_IDLE:
       // IDLE > ---------------------------------------------------------------- //
-        if(cmd == CMD_START)
+        if(rdy)
         {
-          state = STATE_DELAY;
+          state = STATE_CHECK;
         }
       // < IDLE ---------------------------------------------------------------- //
         break;
@@ -67,7 +67,7 @@ void loop()
       // CHECK > --------------------------------------------------------------- //
         if(bfr[0] == START_CMD)
         {
-          state = STATE_ACTIVE;
+          state = STATE_DELAY;
           cnt_tim = 0;
           t = 0;
         }else
@@ -84,8 +84,6 @@ void loop()
         {
           cnt_tim = 0;
           state = STATE_ACTIVE;
-          t_p = millis();
-          Serial.flush();
         }
       // < DELAY --------------------------------------------------------------- //
         break;
@@ -93,59 +91,42 @@ void loop()
       // ACTIVE > -------------------------------------------------------------- //
         cnt_tim++;
         //if(cnt_tim == (uint32_t) (TS_MATLAB/TS_TEENSY))
-        if(com.data_valid())
+        if(true)
         {
-          digitalWrite(LED_BUILTIN, HIGH);
-          com.write_encoder(com.read_data(),1.3,2.4);
-        }else{
-          digitalWrite(LED_BUILTIN, LOW);
+          cnt_tim = 0;
+          Serial.print(sin(2*M_PI*0.25*t), DEC_PLCS);  //theta_1
+          Serial.print(" ");
+          Serial.print(sin(2*M_PI*0.5*t), DEC_PLCS); // theta_2
+          Serial.print(" ");
+          Serial.print(sin(2*M_PI*1*t), DEC_PLCS); // theta_3
+          Serial.print("\n");
         }
-        
-        // if(true)
-        // {
-        //   //cnt_tim = 0;
-        //   t = (millis()-t_p)*1e-3;
-        //   Serial.print(millis(), DEC_PLCS);  //theta_1
-        //   Serial.print("\n");
-
-        //   // Serial.print(sin(2*M_PI*0.25*t), DEC_PLCS);  //theta_1
-        //   // Serial.print(" ");
-        //   // Serial.print((float)cnt_tim, DEC_PLCS); // theta_2
-        //   // Serial.print(" ");
-        //   // Serial.print(t, DEC_PLCS); // theta_3
-        //   // Serial.print("\n");
-        // }
       // < ACTIVE -------------------------------------------------------------- //
         break;
     }
   }
 }
 
+
 void serialEvent()
 {
-  com.rx_ready_isr();
+  if(!rdy)
+  {
+    while(Serial.available())
+    {
+      uint8_t b = Serial.read();
+      if(b == LINE_FEED)
+      {
+        rdy = true;
+        idx = 0;
+      }else
+      {
+        bfr[idx] = b;
+        idx++;
+      }
+    }
+  }
 }
-
-
-// void serialEvent()
-// {
-//   if(!rdy)
-//   {
-//     while(Serial.available())
-//     {
-//       uint8_t b = Serial.read();
-//       if(b == LINE_FEED)
-//       {
-//         rdy = true;
-//         idx = 0;
-//       }else
-//       {
-//         bfr[idx] = b;
-//         idx++;
-//       }
-//     }
-//   }
-// }
 
 
 

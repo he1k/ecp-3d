@@ -1,7 +1,7 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 #include <math.h>
-#include "dac.h"
+//#include "dac.h"
 // ------------------------------------------------ //
 //                    USB serial                    //
 // ------------------------------------------------ //
@@ -57,15 +57,15 @@
 //                     RANDOM                       //
 // ------------------------------------------------ //
 
-#define TS_TEENSY    0.00025
+#define TS_TEENSY    0.001
 #define TS_MATLAB    0.004
 #define SIM_DELAY    3.0
-#define DEC_PLCS     6
+#define DEC_PLCS     10
 #define START_CMD    'B'
 #define STOP_CMD     'S'
+#define LINE_FEED    0xA
 #define TORQUE_LIM 0.1f // Limit torque command (Nm)
 #define TORQUE_MAX 2.0f // Maximum torque command (Nm)
-#define DEC_PLCS 6      // Decimal places for 
 
 // ------------------------------------------------ //
 //                      DAC                         //

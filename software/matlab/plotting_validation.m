@@ -2,11 +2,8 @@ clc;
 close all
 
 theta1 = y(:,1);
-omega1 = y(:,2);
-theta2 = y(:,3);
-omega2 = y(:,4);
-theta3 = y(:,5);
-omega3 = y(:,6);
+theta2 = y(:,2);
+theta3 = y(:,3);
 
 % Plot control commands
 figure;

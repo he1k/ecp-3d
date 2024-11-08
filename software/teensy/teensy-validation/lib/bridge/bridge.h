@@ -2,7 +2,7 @@
 #define BRIDGE_H
 #include <Arduino.h>
 #include "../../src/constants.h"
-#define BFR_SIZE 32
+#define BFR_SIZE 128
 #define STATE_IDLE 0
 #define STATE_READING 1
 #define STATE_DATA_VALID 2
@@ -25,7 +25,7 @@ class Bridge
     Bridge();
     void begin(usb_serial_class *usb_port);
     void write_encoder(float enc1, float enc2, float enc3);
-    void rx_ready();
+    void rx_ready_isr();
     bool data_valid();
     float read_data();
     uint8_t get_state();
