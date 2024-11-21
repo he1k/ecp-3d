@@ -29,6 +29,9 @@
 #define PIN_ENC2_B 2 // Phase B pin for encoder #2
 #define PIN_ENC3_A 0 // Phase A pin for encoder #3
 #define PIN_ENC3_B 1 // Phase B pin for encoder #3
+#define PIN_LED_GREEN  30
+#define PIN_LED_BLUE 31
+#define PIN_LED_RED  32
 
 // Debug
 #define PIN_DEBUG 38
@@ -61,7 +64,7 @@
 #define TORQUE_LIM 0.1f // Limit torque command (Nm)
 #define TORQUE_MAX 2.0f // Maximum torque command (Nm)
 #define DEC_PLCS 6      // Decimal places for 
-
+#define ADDR_WORST_CASE 0 // Flash address for storing worst loop time - To be compared with timer sample time
 // ------------------------------------------------ //
 //                      DAC                         //
 // ------------------------------------------------ //

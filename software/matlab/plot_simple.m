@@ -7,12 +7,14 @@ theta3 = y(:,3);
 
 figure;
 hold on;
-plot(t, theta1,'b');
-plot(t, theta2);
-plot(t, theta3);
-plot(t, miss > 1)
-plot(t,u,'--r')
-legend('$\theta_1$','$\theta_2$','$\theta_3$','miss','$u$');
+stairs(t, theta1,'b');
+stairs(t, theta2);
+stairs(t, theta3);
+stairs(t, miss > 1)
+stairs(t,u,'--r')
+stairs(t,rx_cmd);
+legend('$\theta_1$','$\theta_2$','$\theta_3$','miss','$u$','fo');
+ylim([-1 1])
 figure;
 title('Data Error')
 stairs(t, tx_err,'r')

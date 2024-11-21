@@ -9,7 +9,7 @@ QuadEncoder enc3(CHA_ENC3, PIN_ENC3_A, PIN_ENC3_B, 0);
 QuadEncoder enc2(CHA_ENC2, PIN_ENC2_A, PIN_ENC2_B, 0);
 QuadEncoder enc1(CHA_ENC1, PIN_ENC1_A, PIN_ENC1_B, 0);
 #define PIN_OUT      28
-#define BFR_SIZE     32
+//#define BFR_SIZE     32
 #define STATE_IDLE   0
 #define STATE_CHECK  1
 #define STATE_DELAY  2
@@ -99,6 +99,7 @@ void loop()
           com.write_encoder(com.read_data(),1.3,2.4);
         }else{
           digitalWrite(LED_BUILTIN, LOW);
+          com.write_encoder((float) Serial.available(),0,0);
         }
         
         // if(true)

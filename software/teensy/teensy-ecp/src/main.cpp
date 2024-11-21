@@ -119,10 +119,6 @@ void loop()
         }
         //dac.write_output((uint16_t)u);
         uint32_t m = micros();
-        //com.write_encoder(((float)enc1.read())*C2D,((float)enc2.read())*C2D,((float)enc3.read())*C2D);
-        // com.write_encoder(f,m-m_p,(float)Serial.available());
-        //Serial.print(f,6);
-        //Serial.print("\n");
         m_p = m;
       }
       if(set){

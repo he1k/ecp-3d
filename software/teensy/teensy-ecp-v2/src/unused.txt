@@ -1,0 +1,18 @@
+void tx_float_binary(float *f)
+{
+  uint8_t b[4];
+  memcpy(b, f, 4);
+  Serial.print(b[3], HEX);
+  if(!(b[2] & 0xf0)){
+    Serial.print(0);
+  }
+  Serial.print(b[2], HEX);
+  if(!(b[1] & 0xf0)){
+    Serial.print(0);
+  }
+  Serial.print(b[1], HEX);
+  if(!(b[0] & 0xf0)){
+    Serial.print(0);
+  }
+  Serial.print(b[0], HEX);
+}
